@@ -5,11 +5,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set source files
-file(GLOB SOURCES src/*.cpp src/player/*.cpp src/sprite/*.cpp src/utils/*.cpp)
+file(GLOB SOURCES src/*.cpp src/player/*.cpp src/sprite/*.cpp src/utils/*.cpp src/game/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Add include directories
-include_directories(include include/player include/sprite include/utils)
+include_directories(include include/player include/sprite include/utils include/game)
 
 # Add SDL2 paths for Scoop installation (Windows only)
 if(WIN32)

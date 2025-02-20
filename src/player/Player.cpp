@@ -2,7 +2,7 @@
 #include <iostream>
 
 Player::Player(AssetLoader& assetLoader, InputHandler& inputHandler, int x, int y, int scale, Direction direction)
-    : assetLoader(assetLoader), x(x), y(y), currentState(PlayerState::IDLE), scale(scale), direction(direction), inputHandler(inputHandler), attackInProgress(false) {
+    : assetLoader(assetLoader), inputHandler(inputHandler), x(x), y(y), currentState(PlayerState::IDLE), attackState(PlayerState::IDLE), scale(scale), direction(direction), attackInProgress(false) {
     
     loadAnimation(PlayerState::IDLE, "assets/Characters(100x100)/Soldier/Soldier with shadows/Soldier-Idle.png", 6);
     loadAnimation(PlayerState::WALK, "assets/Characters(100x100)/Soldier/Soldier with shadows/Soldier-Walk.png", 8);
@@ -52,33 +52,34 @@ void Player::handleInput() {
     if (inputHandler.isActionActive(Action::ATTACK)) {
         attackState = PlayerState::ATTACK1;
         attackInProgress = true;
-    } else if (attackInProgress && animations[attackState]->isAnimationComplete()) {
-        attackInProgress = false;
-        attackState = PlayerState::IDLE;
     }
 }
 
 void Player::update() {
     handleInput();
 
-    if (auto it = animations.find(currentState); it != animations.end()) {
-        it->second->update();
-    }
-
     if (attackInProgress) {
         if (auto it = animations.find(attackState); it != animations.end()) {
+            it->second->update();
+            if (it->second->isAnimationComplete()) {
+                attackInProgress = false;
+                attackState = PlayerState::IDLE;
+            }
+        }
+    } else {
+        if (auto it = animations.find(currentState); it != animations.end()) {
             it->second->update();
         }
     }
 }
 
 void Player::render(SDL_Renderer* renderer) {
-    if (auto it = animations.find(currentState); it != animations.end()) {
-        it->second->render(renderer, x, y, direction);
-    }
-
-    if(attackInProgress) {
+    if (attackInProgress) {
         if (auto it = animations.find(attackState); it != animations.end()) {
+            it->second->render(renderer, x, y, direction);
+        }
+    } else {
+        if (auto it = animations.find(currentState); it != animations.end()) {
             it->second->render(renderer, x, y, direction);
         }
     }

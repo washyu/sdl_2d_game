@@ -29,7 +29,7 @@ class Player {
         Direction direction;
         int x, y;
         int scale;
-        InputHandler inputHandler;
+        InputHandler& inputHandler;
         bool attackInProgress;
         
         void loadAnimation(PlayerState state, const std::string& path, int frameCount);
